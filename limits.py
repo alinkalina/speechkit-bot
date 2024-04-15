@@ -1,0 +1,5 @@
+# Лимиты распространяются только на первый проект TTS
+MAX_SYMBOLS = 10000
+MAX_USERS = 10
+MAX_SYMBOLS_FOR_USER = MAX_SYMBOLS // MAX_USERS
+MAX_SYMBOLS_IN_MESSAGE = 200
