@@ -1,6 +1,4 @@
 import sqlite3
-
-import logging
 from limits import MAX_USERS, MAX_SYMBOLS_FOR_USER
 
 
@@ -36,8 +34,6 @@ def create_tables():
     connection.commit()
     connection.close()
 
-    logging.info('Созданы таблицы')
-
 
 def change_db(sql):
     connection, cursor = open_db()
@@ -65,9 +61,7 @@ def add_user(user_id, username):
     if len(get_from_db('SELECT * FROM users')) < MAX_USERS:
         if not user_in_db(user_id):
             change_db(f'INSERT INTO users (chat_id, tg_username) VALUES ({user_id}, "{username}");')
-            logging.info(f'Добавлен пользователь {get_username(user_id)}')
         return True
-    logging.warning(f'В базе уже {MAX_USERS} пользователей')
     return False
 
 

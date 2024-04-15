@@ -1,10 +1,11 @@
 import telebot
-from config import BOT_TOKEN
 from telebot.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
-from database import add_user, start_text, set_voice, get_voice, set_text
+
 from speechkit import text_to_speech
-from limits import MAX_SYMBOLS_IN_MESSAGE, MAX_SYMBOLS_FOR_USER
+from database import add_user, start_text, set_voice, get_voice, set_text
 from check_limits import check_limits
+from limits import MAX_SYMBOLS_IN_MESSAGE, MAX_SYMBOLS_FOR_USER
+from config import BOT_TOKEN
 
 
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -40,7 +41,6 @@ def send_start_message(message):
         with open('no_empty.ogg', 'rb') as f:
             bot.send_audio(message.chat.id, f, reply_markup=ReplyKeyboardRemove())
         f.close()
-        # logging.warning('Достигнут лимит пользователей бота')
 
 
 @bot.message_handler(commands=['tts'])
@@ -55,7 +55,6 @@ def tts_command(message):
         with open('no_empty.ogg', 'rb') as f:
             bot.send_audio(message.chat.id, f, reply_markup=ReplyKeyboardRemove())
         f.close()
-        # logging.warning('Достигнут лимит пользователей бота')
 
 
 def tts(text):
