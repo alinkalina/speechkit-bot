@@ -57,11 +57,12 @@ def user_in_db(user_id):
 
 
 def add_user(user_id, username):
-    if len(get_from_db('SELECT * FROM users')) < MAX_USERS:
-        if not user_in_db(user_id):
+    if not user_in_db(user_id):
+        if len(get_from_db('SELECT * FROM users')) < MAX_USERS:
             change_db(f'INSERT INTO users (chat_id, tg_username) VALUES ({user_id}, "{username}");')
-        return True
-    return False
+        else:
+            return False
+    return True
 
 
 def get_username(user_id):
