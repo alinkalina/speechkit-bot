@@ -15,8 +15,7 @@ def create_tables():
     CREATE TABLE IF NOT EXISTS users(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         chat_id INTEGER NOT NULL UNIQUE,
-        tg_username TEXT NOT NULL,
-        tts_symbols INTEGER DEFAULT {MAX_SYMBOLS_FOR_USER}
+        tg_username TEXT NOT NULL
     );
     ''')
 

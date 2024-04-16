@@ -50,7 +50,8 @@ def tts_command(message):
             start_text(message.chat.id)
             bot.send_message(message.chat.id, 'Выбери голос', reply_markup=create_markup(list(voices.keys())))
         else:
-            bot.send_message(message.chat.id, 'К сожалению, у тебя закончились все символы для синтеза речи')
+            bot.send_message(message.chat.id, 'К сожалению, у тебя закончились все символы для синтеза речи',
+                             reply_markup=ReplyKeyboardRemove())
     else:
         with open('no_empty.ogg', 'rb') as f:
             bot.send_audio(message.chat.id, f, reply_markup=ReplyKeyboardRemove())
@@ -59,11 +60,11 @@ def tts_command(message):
 
 def tts(text):
     if text.content_type != 'text':
-        msg = bot.send_message(text.chat.id, 'Нужно отправить текстовое сообщение!')
+        msg = bot.send_message(text.chat.id, 'Нужно отправить текстовое сообщение!', reply_markup=ReplyKeyboardRemove())
         bot.register_next_step_handler(msg, tts)
     elif len(text.text) > available_symbols(text.chat.id):
         msg = bot.send_message(text.chat.id, f'В этом сообщении больше {available_symbols(text.chat.id)} символов. '
-                                             f'Отправь что-нибудь покороче :)')
+                                             f'Отправь что-нибудь покороче :)', reply_markup=ReplyKeyboardRemove())
         bot.register_next_step_handler(msg, tts)
     else:
         set_text(text.chat.id, text.text)
@@ -80,9 +81,19 @@ def tts(text):
 def text_message(message):
     if message.text in list(voices.keys()):
         set_voice(message.chat.id, voices[message.text])
-        msg = bot.send_message(message.chat.id, f'Напишите текст не более {available_symbols(message.chat.id)} символов'
-                               , reply_markup=ReplyKeyboardRemove())
+        msg = bot.send_message(message.chat.id, f'Напиши текст не более {available_symbols(message.chat.id)} символов',
+                               reply_markup=ReplyKeyboardRemove())
         bot.register_next_step_handler(msg, tts)
+    else:
+        bot.send_message(message.chat.id,
+                         'Тебе следует воспользоваться командой или кнопкой, другого бот не понимает :(',
+                         reply_markup=ReplyKeyboardRemove())
+
+
+@bot.message_handler(content_types=['photo', 'audio', 'document', 'sticker', 'video', 'voice', 'location', 'contact'])
+def error_message(message):
+    bot.send_message(message.chat.id, 'Тебе следует воспользоваться командой или кнопкой, другого бот не понимает :(',
+                     reply_markup=ReplyKeyboardRemove())
 
 
 bot.polling()
