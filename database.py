@@ -69,30 +69,30 @@ def get_username(user_id):
     return get_from_db(f'SELECT tg_username FROM users WHERE chat_id = {user_id};')
 
 
+def get_id_by_chat_id(user_id):
+    return get_from_db(f'SELECT id FROM users WHERE chat_id = {user_id};')[0][0]
+
+
 def start_text(user_id):
-    change_db(f'INSERT INTO texts (author_id) VALUES ((SELECT id FROM users WHERE chat_id = {user_id}));')
+    change_db(f'INSERT INTO texts (author_id) VALUES ({get_id_by_chat_id(user_id)});')
 
 
 def set_voice(user_id, voice):
-    change_db(f'UPDATE texts SET voice = "{voice}" '
-              f'WHERE author_id = (SELECT id FROM users WHERE chat_id = {user_id}) '
-              f'AND text = "";')
+    change_db(f'UPDATE texts SET voice = "{voice}" WHERE author_id = {get_id_by_chat_id(user_id)} AND text = "";')
 
 
 def set_text(user_id, text):
     change_db(f'UPDATE texts SET text = "{text}" '
-              f'WHERE id = (SELECT MAX(id) FROM texts '
-              f'WHERE author_id = (SELECT id FROM users WHERE chat_id = {user_id}));')
+              f'WHERE id = (SELECT MAX(id) FROM texts WHERE author_id = {get_id_by_chat_id(user_id)});')
 
 
 def get_voice(user_id):
-    return get_from_db(f'SELECT voice FROM texts '
-                       f'WHERE author_id = (SELECT id FROM users WHERE chat_id = {user_id}) '
+    return get_from_db(f'SELECT voice FROM texts WHERE author_id = {get_id_by_chat_id(user_id)} '
                        f'ORDER BY id DESC LIMIT 1;')
 
 
 def get_all_user_texts(user_id):
-    return get_from_db(f'SELECT text FROM texts WHERE author_id = (SELECT id FROM users WHERE chat_id = {user_id});')
+    return get_from_db(f'SELECT text FROM texts WHERE author_id = {get_id_by_chat_id(user_id)};')
 
 
 create_tables()
