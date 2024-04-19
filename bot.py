@@ -4,7 +4,8 @@ from telebot.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemo
 from speechkit import text_to_speech, speech_to_text
 from database import add_user, start_tts_text, set_voice, get_voice, set_text, start_stt_text, set_blocks
 from check_limits import check_tts_limits, check_stt_limits
-from limits import MAX_SYMBOLS_IN_MESSAGE, MAX_SYMBOLS_FOR_USER, MAX_BLOCKS_FOR_USER, MAX_BLOCKS_IN_MESSAGE, SECONDS_IN_BLOCK
+from limits import MAX_SYMBOLS_IN_MESSAGE, MAX_SYMBOLS_FOR_USER, MAX_BLOCKS_FOR_USER, MAX_BLOCKS_IN_MESSAGE,\
+    SECONDS_IN_BLOCK
 from config import BOT_TOKEN
 
 
@@ -41,7 +42,7 @@ def available_blocks(user_id):
 @bot.message_handler(commands=['start'])
 def send_start_message(message):
     if add_user(message.chat.id, message.from_user.username):
-        with open('start_tts.ogg', 'rb') as f:
+        with open('start_stt.ogg', 'rb') as f:
             bot.send_audio(message.chat.id, f, reply_markup=ReplyKeyboardRemove())
         f.close()
     else:
@@ -67,7 +68,8 @@ def tts_command(message):
 
 def stt(audio):
     if audio.content_type != 'voice':
-        msg = bot.send_message(audio.chat.id, 'Нужно отправить голосовое сообщение!', reply_markup=ReplyKeyboardRemove())
+        msg = bot.send_message(audio.chat.id, 'Нужно отправить голосовое сообщение!',
+                               reply_markup=ReplyKeyboardRemove())
         bot.register_next_step_handler(msg, stt)
     elif audio.voice.duration > available_blocks(audio.chat.id) * SECONDS_IN_BLOCK:
         msg = bot.send_message(audio.chat.id, f'Это аудио длиннее {available_blocks(audio.chat.id) * SECONDS_IN_BLOCK} '
@@ -82,7 +84,7 @@ def stt(audio):
         if response:
             bot.send_message(audio.chat.id, response, reply_markup=ReplyKeyboardRemove())
         else:
-            with open('start_tts.ogg', 'rb') as f:
+            with open('speechkit_error.ogg', 'rb') as f:
                 bot.send_audio(audio.chat.id, f, reply_markup=ReplyKeyboardRemove())
             f.close()
 
