@@ -1,6 +1,6 @@
 # Бот SpeechKit
 
-[Ссылка](https://github.com/alinkalina/speechkit-bot/tree/tts) на репозиторий
+[Ссылка](https://github.com/alinkalina/speechkit-bot/tree/stt) на репозиторий
 
 [Ссылка](https://t.me/alulamalula_speechkit_bot) на бота (на сервере он не запущен, но можно посмотреть, как я его оформила :) )
 
@@ -9,21 +9,23 @@
 
 В боте при помощи команды /tts синтезируется речь, также пользователь может выбрать женский или мужской голос.
 
-В коде отправляются запросы в API Yandex SpeechKit. Для каждого пользователя ограничено количество символов - 1000. Всего пользователей может быть 10.
+При помощи команды /stt работает распознавание речи.
+
+В коде отправляются запросы в API Yandex SpeechKit. Всего пользователей может быть 8. Для каждого ограничено количество символов - 1250, а также блоков - 8.
 
 *Логирование не добавляла.*
 
 
 ## Инструкция по запуску проекта
 - Клонируйте репозиторий
-- Добавьте необходимые библиотеки Python, зависимости прописаны в файле [requirements.txt](https://github.com/alinkalina/speechkit-bot/blob/tts/requirements.txt)
+- Добавьте необходимые библиотеки Python, зависимости прописаны в файле [requirements.txt](https://github.com/alinkalina/speechkit-bot/blob/stt/requirements.txt)
 - Создайте файл `config.py` и поместите в него переменные:
   - `BOT_TOKEN` (str) - Ваш токен Телеграм бота
   - `IAM_TOKEN` (str) - Ваш iam токен для доступа к API Yandex SpeechKit
   - `FOLDER_ID` (str) - Ваш folder id для доступа к API Yandex SpeechKit
 - Запустите файл `bot.py`
 - Перейдите в бота по [ссылке](https://t.me/alulamalula_speechkit_bot) и нажмите СТАРТ
-- Команду /tts можно найти в Меню бота
+- Команды /tts и /stt можно найти в Меню бота
 
 
 ## Контакты
