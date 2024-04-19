@@ -18,3 +18,25 @@ def text_to_speech(text, voice):
     if response.status_code == 200:
         return response.content
     return False
+
+
+def speech_to_text(audio):
+    headers = {
+        'Authorization': f'Bearer {IAM_TOKEN}',
+    }
+    params = '&'.join([
+        'topic=general',
+        f'folderId={FOLDER_ID}',
+        'lang=ru-RU'
+    ])
+
+    response = requests.post(
+        f'https://stt.api.cloud.yandex.net/speech/v1/stt:recognize?{params}',
+        headers=headers,
+        data=audio
+    )
+    answer = response.json()
+
+    if answer.get('error_code') is None:
+        return answer.get('result')
+    return False

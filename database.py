@@ -1,5 +1,5 @@
 import sqlite3
-from limits import MAX_USERS, MAX_SYMBOLS_FOR_USER
+from limits import MAX_USERS, SECONDS_IN_BLOCK
 
 
 def open_db():
@@ -25,6 +25,15 @@ def create_tables():
         author_id INTEGER NOT NULL,
         voice TEXT DEFAULT "",
         text TEXT DEFAULT "",
+        FOREIGN KEY (author_id) REFERENCES users (id)
+    );
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS audio(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        author_id INTEGER NOT NULL,
+        blocks INTEGER DEFAULT 0,
         FOREIGN KEY (author_id) REFERENCES users (id)
     );
     ''')
@@ -73,7 +82,7 @@ def get_id_by_chat_id(user_id):
     return get_from_db(f'SELECT id FROM users WHERE chat_id = {user_id};')[0][0]
 
 
-def start_text(user_id):
+def start_tts_text(user_id):
     change_db(f'INSERT INTO texts (author_id) VALUES ({get_id_by_chat_id(user_id)});')
 
 
@@ -93,6 +102,20 @@ def get_voice(user_id):
 
 def get_all_user_texts(user_id):
     return get_from_db(f'SELECT text FROM texts WHERE author_id = {get_id_by_chat_id(user_id)};')
+
+
+def start_stt_text(user_id):
+    change_db(f'INSERT INTO audio (author_id) VALUES ({get_id_by_chat_id(user_id)});')
+
+
+def set_blocks(user_id, duration):
+    blocks = (duration // SECONDS_IN_BLOCK) + 1
+    change_db(f'UPDATE audio SET blocks = {blocks} '
+              f'WHERE id = (SELECT MAX(id) FROM audio WHERE author_id = {get_id_by_chat_id(user_id)});')
+
+
+def get_user_blocks(user_id):
+    return get_from_db(f'SELECT blocks FROM audio WHERE author_id = {get_id_by_chat_id(user_id)};')
 
 
 create_tables()
